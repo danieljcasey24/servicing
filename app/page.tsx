@@ -1,65 +1,125 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { AppShell } from '@/components/app-shell';
 
-export default function Home() {
+const wedges = [
+  {
+    id: 1,
+    href: '/wedge1',
+    title: 'Loan Underwriting & Asset Performance',
+    description:
+      'Upload loan documents, compare current performance against underwriting baseline, detect covenant breach risk early, and auto-draft variance commentary for investor reporting.',
+    tags: ['Financial Analysis', 'Covenant Monitoring', 'AI Commentary'],
+    color: 'bg-blue-50 border-blue-200',
+    accent: 'bg-blue-600',
+    stat: { label: 'Time saved per loan', value: '45–60 min' },
+  },
+  {
+    id: 2,
+    href: '/wedge2',
+    title: 'Escrow Administration — Taxes & Insurance',
+    description:
+      'Forecast tax and insurance costs using external market signals, proactively identify reserve shortfalls before they trap capital, and prioritize loans needing immediate attention.',
+    tags: ['Escrow Forecasting', 'Shortfall Alerts', 'Cost Modeling'],
+    color: 'bg-orange-50 border-orange-200',
+    accent: 'bg-orange-500',
+    stat: { label: 'Trapped capital at risk', value: '$5M+' },
+  },
+  {
+    id: 3,
+    href: '/wedge3',
+    title: 'Reported Asset Performance — Rent Roll Ingestion',
+    description:
+      'Ingest rent rolls and operating statements in any format, extract and normalize data with AI, spread across periods, and automatically detect variances above threshold.',
+    tags: ['Document Extraction', 'Financial Spreading', 'Variance Detection'],
+    color: 'bg-green-50 border-green-200',
+    accent: 'bg-green-600',
+    stat: { label: 'Formats handled', value: '50+ unique' },
+  },
+  {
+    id: 4,
+    href: '/wedge4',
+    title: 'Delinquency Prediction — Market Monitoring',
+    description:
+      'Surface external market signals (vacancy trends, insurance spikes, new supply) as leading indicators of loan stress months before a covenant breach or delinquency occurs.',
+    tags: ['Predictive Analytics', 'Market Signals', 'Risk Scoring'],
+    color: 'bg-red-50 border-red-200',
+    accent: 'bg-red-600',
+    stat: { label: 'Loans monitored', value: '87 active' },
+  },
+  {
+    id: 5,
+    href: '/wedge5',
+    title: 'Borrower Communications & Automation',
+    description:
+      'Auto-draft context-aware outreach for overdue financial statements and insurance certificates, track outstanding items, and reduce average borrower follow-up from 15 touches to under 5.',
+    tags: ['Outreach Automation', 'Document Tracking', 'AI Drafting'],
+    color: 'bg-purple-50 border-purple-200',
+    accent: 'bg-purple-600',
+    stat: { label: 'Reduction in manual touches', value: '15 → 4.2' },
+  },
+];
+
+export default function HubPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <AppShell>
+      <div className="p-8">
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-3">
+            <h1 className="text-3xl font-bold text-gray-900">AI for CRE Loan Servicing</h1>
+            <Badge variant="outline" className="text-xs">Design Partner Prototypes</Badge>
+          </div>
+          <p className="text-gray-500 text-base max-w-3xl">
+            Five independent prototype experiences — each targeting a distinct pain point in commercial loan servicing.
+            Select a wedge below to explore the workflow.
+          </p>
+          <div className="mt-4 flex items-center gap-6 text-sm text-gray-400">
+            <span>87 loans monitored</span>
+            <span>·</span>
+            <span>$5T addressable CRE debt</span>
+            <span>·</span>
+            <span>10 discovery calls completed</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {wedges.map((w) => (
+            <Link key={w.id} href={w.href} className="group block">
+              <div className={`rounded-xl border-2 ${w.color} p-6 h-full transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}>
+                <div className="w-full h-36 rounded-lg bg-white/70 border border-white/80 mb-5 flex items-center justify-center relative">
+                  <span className="text-5xl font-black text-gray-200 select-none">{w.id}</span>
+                  <div className="absolute bottom-3 right-3">
+                    <Badge variant="secondary" className="text-xs">Prototype Ready</Badge>
+                  </div>
+                </div>
+                <h2 className="text-base font-semibold text-gray-900 mb-2 leading-snug">{w.title}</h2>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">{w.description}</p>
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {w.tags.map((tag) => (
+                    <span key={tag} className="text-xs px-2 py-0.5 bg-white/80 text-gray-600 rounded-full border border-gray-200">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="pt-4 border-t border-white/60 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{w.stat.label}</span>
+                  <span className="text-sm font-semibold text-gray-800">{w.stat.value}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-10 p-6 bg-white rounded-xl border border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">About These Prototypes</h3>
+          <p className="text-sm text-gray-500 leading-relaxed max-w-4xl">
+            Each prototype represents a distinct product wedge for an AI-native CRE loan servicing intelligence layer.
+            They are designed to be tested independently with design partners without blending use cases.
+            The underlying opportunity: ~$5T in U.S. CRE mortgage debt serviced on platforms built in the 1980s–90s
+            with no automation, no inference, and no forward-looking intelligence.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }
