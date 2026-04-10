@@ -60,50 +60,51 @@ export default function Wedge3() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Asset Performance — Rent Roll Ingestion</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Asset Performance — Rent Roll Ingestion</h1>
+            <p className="text-[13px] text-gray-500 mt-1 leading-5">
               2200 Market St, San Francisco · LN-4821 · Q4 2024 Submission
             </p>
           </div>
-          <Badge className="mt-1">AI Processed</Badge>
+          <Badge className="mt-1 text-[11px]">AI Processed</Badge>
         </div>
 
         {/* Three-panel spread */}
         <div className="flex gap-3 flex-1 min-h-0">
+
           {/* Panel 1: Raw */}
-          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col">
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-              <span className="text-xs font-semibold text-gray-500">①</span>
-              <p className="text-sm font-semibold text-gray-800">Raw Document (PDF)</p>
+          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col min-w-0">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-400 bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">1</span>
+              <p className="text-[13px] font-semibold text-gray-800">Raw Document (PDF)</p>
             </div>
             <div className="p-4 flex-1 bg-gray-50 overflow-y-auto">
-              <pre className="text-xs text-gray-600 font-mono leading-5 whitespace-pre-wrap">
+              <pre className="text-[11px] text-gray-500 font-mono leading-[1.7] whitespace-pre-wrap">
                 {rawLines.join('\n')}
               </pre>
             </div>
           </div>
 
           {/* Panel 2: AI Extraction */}
-          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col min-w-0">
             <div className="px-4 py-3 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
-              <span className="text-xs font-semibold text-blue-400">②</span>
-              <p className="text-sm font-semibold text-gray-800">AI Extraction & Normalization</p>
+              <span className="text-[11px] font-semibold text-blue-500 bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">2</span>
+              <p className="text-[13px] font-semibold text-gray-800">AI Extraction & Normalization</p>
             </div>
             <div className="overflow-y-auto flex-1">
-              <table className="w-full text-xs">
+              <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-500 border-b border-gray-100">
-                    <th className="text-left px-4 py-2.5 font-medium">Field</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Extracted Value</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Confidence</th>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Field</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Extracted Value</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Confidence</th>
                   </tr>
                 </thead>
                 <tbody>
                   {extractedRows.map((row, i) => (
-                    <tr key={row.field} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
-                      <td className="px-4 py-2 text-gray-600">{row.field}</td>
-                      <td className="px-4 py-2 text-gray-900 font-medium">{row.value}</td>
-                      <td className="px-4 py-2 text-green-600 font-medium">{row.confidence}</td>
+                    <tr key={row.field} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/60' : ''}`}>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-600">{row.field}</td>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-900 font-medium">{row.value}</td>
+                      <td className="px-4 py-2.5 text-[12px] text-green-600 font-medium">{row.confidence}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -112,47 +113,48 @@ export default function Wedge3() {
           </div>
 
           {/* Panel 3: Spread */}
-          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col min-w-0">
             <div className="px-4 py-3 bg-green-50 border-b border-green-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-green-500">③</span>
-                <p className="text-sm font-semibold text-gray-800">Spread — Prior vs. Current vs. UW</p>
+                <span className="text-[11px] font-semibold text-green-600 bg-green-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">3</span>
+                <p className="text-[13px] font-semibold text-gray-800">Spread — Prior vs. Current vs. UW</p>
               </div>
-              <Button size="sm" variant="outline" className="text-xs h-7 gap-1.5">
-                <Download size={12} />
+              <Button size="sm" variant="outline" className="text-[11px] h-7 px-2.5 gap-1.5">
+                <Download size={11} />
                 Export
               </Button>
             </div>
             <div className="overflow-y-auto flex-1">
-              <table className="w-full text-xs">
+              <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-500 border-b border-gray-100">
-                    <th className="text-left px-4 py-2.5 font-medium">Metric</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Underwritten</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Q3 2024</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Q4 2024</th>
-                    <th className="text-left px-4 py-2.5 font-medium">Δ QoQ</th>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Metric</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Underwritten</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Q3 2024</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Q4 2024</th>
+                    <th className="text-left px-4 py-2.5 text-[11px] font-medium text-gray-500">Δ QoQ</th>
                   </tr>
                 </thead>
                 <tbody>
                   {spreadRows.map((row, i) => (
-                    <tr key={row.metric} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
-                      <td className="px-4 py-2 text-gray-700 font-medium">{row.metric}</td>
-                      <td className="px-4 py-2 text-gray-400">{row.uw}</td>
-                      <td className="px-4 py-2 text-gray-600">{row.q3}</td>
-                      <td className="px-4 py-2 text-gray-900 font-semibold">{row.q4}</td>
-                      <td className={`px-4 py-2 font-semibold ${row.neg ? 'text-red-600' : 'text-green-600'}`}>{row.delta}</td>
+                    <tr key={row.metric} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/60' : ''}`}>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-700 font-semibold">{row.metric}</td>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-400">{row.uw}</td>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-600">{row.q3}</td>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-900 font-semibold">{row.q4}</td>
+                      <td className={`px-4 py-2.5 text-[12px] font-semibold ${row.neg ? 'text-red-600' : 'text-green-600'}`}>{row.delta}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <div className="px-4 py-3 border-t border-gray-100 bg-amber-50">
-              <p className="text-xs text-amber-800">
+              <p className="text-[11px] text-amber-800 leading-[1.5]">
                 ⚠ 4 metrics exceed 20% variance threshold. AI-drafted commentary ready for review.
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </AppShell>

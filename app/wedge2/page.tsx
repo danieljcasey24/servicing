@@ -1,7 +1,6 @@
 import { AppShell } from '@/components/app-shell';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Table,
@@ -46,41 +45,40 @@ export default function Wedge2() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Taxes & Insurance</h1>
-            <p className="text-sm text-gray-500 mt-1">Forecast shortfalls · Track disbursements · Monitor insurance renewals</p>
+            <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Taxes & Insurance</h1>
+            <p className="text-[13px] text-gray-500 mt-1 leading-5">Forecast shortfalls · Track disbursements · Monitor insurance renewals</p>
           </div>
-          <Button variant="outline" className="gap-2">
-            <Pencil size={14} />
+          <Button variant="outline" size="sm" className="gap-2 text-[13px]">
+            <Pencil size={13} />
             Draft Email
           </Button>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="overview">
-          <TabsList variant="default">
+          <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="forecast">Forecast</TabsTrigger>
           </TabsList>
+
           <TabsContent value="overview">
-            <div className="flex flex-col gap-6 pt-4">
+            <div className="flex flex-col gap-5 pt-5">
               {/* Alert */}
-              <Alert className="border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
-                  <span>
-                    <strong>Projected shortfall of $5.0M across portfolio</strong> — AI detected 23 loans with tax/insurance cost
-                    spikes exceeding reserve coverage. Immediate review recommended.
-                  </span>
-                </AlertDescription>
-              </Alert>
+              <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-100 rounded-xl text-[13px] text-red-700 leading-5">
+                <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                <span>
+                  <span className="font-semibold">Projected shortfall of $5.0M across portfolio</span>
+                  {' '}— AI detected 23 loans with tax/insurance cost spikes exceeding reserve coverage. Immediate review recommended.
+                </span>
+              </div>
 
               {/* KPI Cards */}
               <div className="grid grid-cols-4 gap-4">
                 {kpis.map((kpi) => (
                   <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-5">
-                    <p className="text-xs font-medium text-gray-500 mb-1">{kpi.label}</p>
-                    <p className={`text-2xl font-bold mb-1 ${kpi.warn ? 'text-red-600' : 'text-gray-900'}`}>{kpi.value}</p>
-                    <p className="text-xs text-gray-400">{kpi.sub}</p>
+                    <p className="text-[11px] font-medium text-gray-500 mb-[6px]">{kpi.label}</p>
+                    <p className={`text-2xl font-bold leading-tight mb-[4px] ${kpi.warn ? 'text-red-600' : 'text-gray-900'}`}>{kpi.value}</p>
+                    <p className="text-[11px] text-gray-400 leading-4">{kpi.sub}</p>
                   </div>
                 ))}
               </div>
@@ -88,31 +86,31 @@ export default function Wedge2() {
               {/* Table + Chart */}
               <div className="flex gap-4">
                 {/* Loans table */}
-                <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">Loans with Projected Escrow Shortfall</p>
-                    <span className="text-sm text-red-600 font-medium">23 loans</span>
+                <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden min-w-0">
+                  <div className="flex items-center justify-between px-5 py-[14px] border-b border-gray-100">
+                    <p className="text-[13px] font-semibold text-gray-900">Loans with Projected Escrow Shortfall</p>
+                    <span className="text-[13px] text-red-600 font-semibold">23 loans</span>
                   </div>
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Loan ID</TableHead>
-                        <TableHead>Property</TableHead>
-                        <TableHead>Reserve Bal.</TableHead>
-                        <TableHead>Projected Cost</TableHead>
-                        <TableHead>Shortfall</TableHead>
-                        <TableHead>Risk</TableHead>
+                      <TableRow className="hover:bg-transparent border-b border-gray-100">
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Loan ID</TableHead>
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Property</TableHead>
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Reserve Bal.</TableHead>
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Projected Cost</TableHead>
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Shortfall</TableHead>
+                        <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Risk</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {loanRows.map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell className="font-medium text-xs">{row.id}</TableCell>
-                          <TableCell className="text-xs">{row.property}</TableCell>
-                          <TableCell className="text-xs">{row.reserve}</TableCell>
-                          <TableCell className="text-xs">{row.projected}</TableCell>
-                          <TableCell className="text-xs text-red-600 font-medium">{row.shortfall}</TableCell>
-                          <TableCell>{riskBadge(row.risk)}</TableCell>
+                        <TableRow key={row.id} className="border-b border-gray-50">
+                          <TableCell className="text-[13px] font-medium px-5 py-3">{row.id}</TableCell>
+                          <TableCell className="text-[13px] text-gray-600 px-3 py-3">{row.property}</TableCell>
+                          <TableCell className="text-[13px] text-gray-600 px-3 py-3">{row.reserve}</TableCell>
+                          <TableCell className="text-[13px] text-gray-600 px-3 py-3">{row.projected}</TableCell>
+                          <TableCell className="text-[13px] text-red-600 font-semibold px-3 py-3">{row.shortfall}</TableCell>
+                          <TableCell className="px-5 py-3">{riskBadge(row.risk)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -120,49 +118,49 @@ export default function Wedge2() {
                 </div>
 
                 {/* Forecast chart */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6 w-[360px] flex-shrink-0 flex flex-col gap-4">
+                <div className="bg-white rounded-xl border border-gray-200 p-5 w-[340px] flex-shrink-0 flex flex-col gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Escrow Cost Forecast — Next 12 Months</p>
-                    <p className="text-xs text-gray-500 mt-0.5">AI-predicted tax & insurance vs. current reserves</p>
+                    <p className="text-[13px] font-semibold text-gray-900">Escrow Cost Forecast — Next 12 Months</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5 leading-4">AI-predicted tax & insurance vs. current reserves</p>
                   </div>
 
-                  <div className="flex items-end gap-2 h-48 bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-end gap-[6px] h-44 bg-gray-50 rounded-lg p-3">
                     {months.map((m, i) => (
                       <div key={m} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full flex items-end gap-0.5" style={{ height: '160px' }}>
+                        <div className="w-full flex items-end gap-[2px]" style={{ height: '140px' }}>
                           <div
-                            className="flex-1 bg-blue-400 opacity-80 rounded-t"
+                            className="flex-1 bg-blue-400 rounded-t"
                             style={{ height: `${(reserveHeights[i] / 248) * 100}%` }}
                           />
                           <div
-                            className="flex-1 bg-orange-400 opacity-90 rounded-t"
+                            className="flex-1 bg-orange-400 rounded-t"
                             style={{ height: `${(predictedHeights[i] / 248) * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-400">{m}</span>
+                        <span className="text-[10px] text-gray-400">{m}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex gap-4 text-xs text-gray-500">
+                  <div className="flex gap-4 text-[11px] text-gray-500">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 bg-blue-400 rounded inline-block opacity-80" /> Reserve
+                      <span className="w-2.5 h-2.5 bg-blue-400 rounded-sm inline-block" /> Reserve
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 bg-orange-400 rounded inline-block opacity-90" /> AI Forecast
+                      <span className="w-2.5 h-2.5 bg-orange-400 rounded-sm inline-block" /> AI Forecast
                     </span>
                   </div>
 
-                  <p className="text-xs text-gray-600 leading-relaxed bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    ⚡ Tax costs projected to increase 18% in Q2 driven by reassessments in CA, FL markets.
-                    23 loans will require reserve top-ups averaging $22K each.
+                  <p className="text-[11px] text-amber-800 leading-[1.5] bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    ⚡ Tax costs projected to increase 18% in Q2 driven by reassessments in CA, FL markets. 23 loans will require reserve top-ups averaging $22K each.
                   </p>
                 </div>
               </div>
             </div>
           </TabsContent>
+
           <TabsContent value="forecast">
-            <div className="pt-4 text-sm text-gray-500">Forecast view coming soon.</div>
+            <div className="pt-5 text-[13px] text-gray-500">Forecast view coming soon.</div>
           </TabsContent>
         </Tabs>
       </div>

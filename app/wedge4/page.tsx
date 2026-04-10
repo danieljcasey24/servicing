@@ -57,13 +57,13 @@ export default function Wedge4() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Delinquency Prediction & Market Monitoring</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Delinquency Prediction & Market Monitoring</h1>
+            <p className="text-[13px] text-gray-500 mt-1 leading-5">
               AI-powered early warning system · External market signals · 87 active loans monitored
             </p>
           </div>
-          <Button variant="outline" className="gap-2">
-            <Download size={14} />
+          <Button variant="outline" size="sm" className="gap-2 text-[13px]">
+            <Download size={13} />
             Export Risk Report
           </Button>
         </div>
@@ -72,9 +72,9 @@ export default function Wedge4() {
         <div className="grid grid-cols-4 gap-4">
           {kpis.map((kpi) => (
             <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-medium text-gray-500 mb-1">{kpi.label}</p>
-              <p className={`text-2xl font-bold mb-1 ${kpi.color}`}>{kpi.value}</p>
-              <p className="text-xs text-gray-400">{kpi.sub}</p>
+              <p className="text-[11px] font-medium text-gray-500 mb-[6px]">{kpi.label}</p>
+              <p className={`text-2xl font-bold leading-tight mb-[4px] ${kpi.color}`}>{kpi.value}</p>
+              <p className="text-[11px] text-gray-400 leading-4">{kpi.sub}</p>
             </div>
           ))}
         </div>
@@ -82,32 +82,32 @@ export default function Wedge4() {
         {/* Table + Signals */}
         <div className="flex gap-4">
           {/* Loan risk table */}
-          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <p className="text-sm font-semibold text-gray-900">Portfolio Risk Ranking</p>
-              <Badge variant="outline">Sorted by Risk Score</Badge>
+          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden min-w-0">
+            <div className="flex items-center justify-between px-5 py-[14px] border-b border-gray-100">
+              <p className="text-[13px] font-semibold text-gray-900">Portfolio Risk Ranking</p>
+              <Badge variant="outline" className="text-[11px]">Sorted by Risk Score</Badge>
             </div>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Loan</TableHead>
-                  <TableHead>Property / Market</TableHead>
-                  <TableHead>Risk Score</TableHead>
-                  <TableHead>DSCR Trend</TableHead>
-                  <TableHead>Key Signal</TableHead>
-                  <TableHead>Status</TableHead>
+                <TableRow className="hover:bg-transparent border-b border-gray-100">
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Loan</TableHead>
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Property / Market</TableHead>
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Risk Score</TableHead>
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">DSCR Trend</TableHead>
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Key Signal</TableHead>
+                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loanRows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="font-medium text-xs">{row.id}</TableCell>
-                    <TableCell className="text-xs">{row.property}</TableCell>
-                    <TableCell className={`font-bold text-sm ${scoreColor(row.score)}`}>{row.score}</TableCell>
-                    <TableCell className="text-xs font-mono">{row.dscr}</TableCell>
-                    <TableCell className="text-xs text-gray-500">{row.signal}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs font-semibold ${statusColor(row.status)}`}>{row.status}</span>
+                  <TableRow key={row.id} className="border-b border-gray-50">
+                    <TableCell className="text-[13px] font-medium px-5 py-3">{row.id}</TableCell>
+                    <TableCell className="text-[13px] text-gray-600 px-3 py-3">{row.property}</TableCell>
+                    <TableCell className={`text-[15px] font-bold px-3 py-3 ${scoreColor(row.score)}`}>{row.score}</TableCell>
+                    <TableCell className="text-[13px] text-gray-600 px-3 py-3 font-mono">{row.dscr}</TableCell>
+                    <TableCell className="text-[12px] text-gray-500 px-3 py-3">{row.signal}</TableCell>
+                    <TableCell className="px-5 py-3">
+                      <span className={`text-[12px] font-semibold ${statusColor(row.status)}`}>{row.status}</span>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -116,19 +116,19 @@ export default function Wedge4() {
           </div>
 
           {/* Market signals */}
-          <div className="bg-white rounded-xl border border-gray-200 w-[380px] flex-shrink-0 flex flex-col overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <p className="text-sm font-semibold text-gray-900">External Market Signals</p>
+          <div className="bg-white rounded-xl border border-gray-200 w-[360px] flex-shrink-0 flex flex-col overflow-hidden">
+            <div className="px-5 py-[14px] border-b border-gray-100">
+              <p className="text-[13px] font-semibold text-gray-900">External Market Signals</p>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-gray-100">
               {signals.map((sig) => (
                 <div key={sig.market} className="px-5 py-4">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${sevDot(sig.sev)}`} />
-                    <span className="text-xs font-semibold text-gray-800">{sig.market}</span>
-                    <span className={`text-xs font-semibold ml-auto ${sevColor(sig.sev)}`}>{sig.sev}</span>
+                    <span className={`w-[7px] h-[7px] rounded-full flex-shrink-0 ${sevDot(sig.sev)}`} />
+                    <span className="text-[12px] font-semibold text-gray-800">{sig.market}</span>
+                    <span className={`text-[11px] font-semibold ml-auto ${sevColor(sig.sev)}`}>{sig.sev}</span>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed pl-4">{sig.signal}</p>
+                  <p className="text-[11px] text-gray-500 leading-[1.6] pl-[17px]">{sig.signal}</p>
                 </div>
               ))}
             </div>
