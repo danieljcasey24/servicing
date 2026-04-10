@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Download } from 'lucide-react';
 
 const kpis = [
   { label: 'High Risk Loans', value: '11', sub: 'Delinquency probability >40%', color: 'text-red-600' },
@@ -19,7 +20,7 @@ const kpis = [
 
 const loanRows = [
   { id: 'LN-4821', property: '2200 Market, SF', score: 78, dscr: '1.18x ↓', signal: 'Vacancy +7pp vs. uw', status: 'High Risk' },
-  { id: 'LN-3391', property: 'Oakview Apts, ATL', score: 71, dscr: '1.22x ↓', signal: 'Rent growth -6%', status: 'High Risk' },
+  { id: 'LN-3391', property: 'Oakview Apts, ATL', score: 71, dscr: '1.22x ↓', signal: 'Rent growth −6%', status: 'High Risk' },
   { id: 'LN-5502', property: 'Riviera Plaza, MIA', score: 65, dscr: '1.29x ↓', signal: 'Insurance +18%', status: 'High Risk' },
   { id: 'LN-2280', property: 'Sunset Office, LA', score: 58, dscr: '1.31x ↓', signal: 'Office vacancy 22%', status: 'Watch' },
   { id: 'LN-6710', property: 'Parkway Retail, DFW', score: 52, dscr: '1.33x →', signal: 'New supply nearby', status: 'Watch' },
@@ -61,7 +62,10 @@ export default function Wedge4() {
               AI-powered early warning system · External market signals · 87 active loans monitored
             </p>
           </div>
-          <Button variant="outline">Export Risk Report</Button>
+          <Button variant="outline" className="gap-2">
+            <Download size={14} />
+            Export Risk Report
+          </Button>
         </div>
 
         {/* KPI Cards */}
@@ -99,11 +103,11 @@ export default function Wedge4() {
                   <TableRow key={row.id}>
                     <TableCell className="font-medium text-xs">{row.id}</TableCell>
                     <TableCell className="text-xs">{row.property}</TableCell>
-                    <TableCell className={`font-semibold text-sm ${scoreColor(row.score)}`}>{row.score}</TableCell>
-                    <TableCell className="text-xs">{row.dscr}</TableCell>
-                    <TableCell className="text-xs text-gray-600">{row.signal}</TableCell>
+                    <TableCell className={`font-bold text-sm ${scoreColor(row.score)}`}>{row.score}</TableCell>
+                    <TableCell className="text-xs font-mono">{row.dscr}</TableCell>
+                    <TableCell className="text-xs text-gray-500">{row.signal}</TableCell>
                     <TableCell>
-                      <span className={`text-xs font-medium ${statusColor(row.status)}`}>{row.status}</span>
+                      <span className={`text-xs font-semibold ${statusColor(row.status)}`}>{row.status}</span>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -112,17 +116,17 @@ export default function Wedge4() {
           </div>
 
           {/* Market signals */}
-          <div className="bg-white rounded-xl border border-gray-200 w-[400px] flex-shrink-0 flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 w-[380px] flex-shrink-0 flex flex-col overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <p className="text-sm font-semibold text-gray-900">External Market Signals</p>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-gray-100">
               {signals.map((sig) => (
                 <div key={sig.market} className="px-5 py-4">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <span className={`w-2 h-2 rounded-full flex-shrink-0 ${sevDot(sig.sev)}`} />
                     <span className="text-xs font-semibold text-gray-800">{sig.market}</span>
-                    <span className={`text-xs font-medium ml-auto ${sevColor(sig.sev)}`}>{sig.sev}</span>
+                    <span className={`text-xs font-semibold ml-auto ${sevColor(sig.sev)}`}>{sig.sev}</span>
                   </div>
                   <p className="text-xs text-gray-500 leading-relaxed pl-4">{sig.signal}</p>
                 </div>

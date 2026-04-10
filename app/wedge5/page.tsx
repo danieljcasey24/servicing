@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Send, Pencil, CheckCircle } from 'lucide-react';
 
 const kpis = [
   { label: 'Outstanding Requests', value: '34', sub: 'Awaiting borrower response', color: 'text-red-600' },
@@ -56,12 +57,15 @@ export default function Wedge5() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Borrower Communications & Automation</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Communications</h1>
             <p className="text-sm text-gray-500 mt-1">
               Auto-draft outreach · Track outstanding items · Reduce manual follow-up touches
             </p>
           </div>
-          <Button>Draft All Overdue</Button>
+          <Button className="gap-2">
+            <Pencil size={14} />
+            Draft All Overdue
+          </Button>
         </div>
 
         {/* KPI Cards */}
@@ -81,7 +85,7 @@ export default function Wedge5() {
           <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <p className="text-sm font-semibold text-gray-900">Outstanding Borrower Requests</p>
-              <span className="text-sm text-red-600 font-medium">34 open</span>
+              <span className="text-sm text-red-600 font-semibold">34 open</span>
             </div>
             <Table>
               <TableHeader>
@@ -98,12 +102,12 @@ export default function Wedge5() {
                 {borrowers.map((row) => (
                   <TableRow key={row.loan} className="cursor-pointer hover:bg-gray-50">
                     <TableCell className="font-medium text-xs">{row.name}</TableCell>
-                    <TableCell className="text-xs">{row.loan}</TableCell>
+                    <TableCell className="text-xs font-mono text-gray-500">{row.loan}</TableCell>
                     <TableCell className="text-xs">{row.item}</TableCell>
                     <TableCell className="text-xs text-gray-500">{row.due}</TableCell>
                     <TableCell className="text-xs">{row.touches}</TableCell>
                     <TableCell>
-                      <span className={`text-xs font-medium ${statusColor(row.status)}`}>{row.status}</span>
+                      <span className={`text-xs font-semibold ${statusColor(row.status)}`}>{row.status}</span>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -112,7 +116,7 @@ export default function Wedge5() {
           </div>
 
           {/* AI Email Draft */}
-          <div className="bg-white rounded-xl border border-gray-200 w-[500px] flex-shrink-0 flex flex-col overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 w-[480px] flex-shrink-0 flex flex-col overflow-hidden">
             <div className="px-5 py-4 bg-indigo-50 border-b border-indigo-100">
               <p className="text-sm font-semibold text-gray-800">AI-Drafted Outreach — Metro Capital / LN-4821</p>
               <p className="text-xs text-gray-500 mt-0.5">Touch #8 of 15 · 45 days overdue</p>
@@ -120,11 +124,11 @@ export default function Wedge5() {
 
             <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
               <div className="flex items-center gap-2 text-xs">
-                <span className="font-medium text-gray-500 w-14">To:</span>
+                <span className="font-medium text-gray-400 w-14">To:</span>
                 <span className="text-gray-800">j.kim@metrocapital.com</span>
               </div>
               <div className="flex items-start gap-2 text-xs">
-                <span className="font-medium text-gray-500 w-14 mt-0.5">Subject:</span>
+                <span className="font-medium text-gray-400 w-14 mt-0.5">Subject:</span>
                 <span className="text-gray-800 font-medium">Action Required: Q4 2024 Financial Statements — LN-4821 [45 Days Overdue]</span>
               </div>
               <div className="border-t border-gray-100 pt-3">
@@ -134,12 +138,21 @@ export default function Wedge5() {
 
             <div className="px-5 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3">
               {sent ? (
-                <span className="text-sm font-medium text-green-600">✓ Email sent successfully</span>
+                <span className="text-sm font-medium text-green-600 flex items-center gap-2">
+                  <CheckCircle size={15} />
+                  Email sent successfully
+                </span>
               ) : (
                 <>
-                  <Button size="sm" onClick={() => setSent(true)}>Send Email</Button>
-                  <Button size="sm" variant="outline">Edit Draft</Button>
-                  <span className="text-xs text-gray-500 ml-auto">↩ Auto-schedule follow-up in 3 days</span>
+                  <Button size="sm" className="gap-2" onClick={() => setSent(true)}>
+                    <Send size={13} />
+                    Send Email
+                  </Button>
+                  <Button size="sm" variant="outline" className="gap-2">
+                    <Pencil size={13} />
+                    Edit Draft
+                  </Button>
+                  <span className="text-xs text-gray-400 ml-auto">↩ Auto-schedule follow-up in 3 days</span>
                 </>
               )}
             </div>

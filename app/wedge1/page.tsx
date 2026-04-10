@@ -10,19 +10,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Upload } from 'lucide-react';
 
 const kpis = [
-  { label: 'Current DSCR', value: '1.18x', sub: 'Underwritten: 1.35x  ↓ -12.6%', warn: true },
-  { label: 'Net Operating Income', value: '$412,800', sub: 'Underwritten: $465,000  ↓ -11.2%', warn: true },
-  { label: 'Occupancy Rate', value: '88%', sub: 'Underwritten: 95%  ↓ -7pp', warn: true },
+  { label: 'Current DSCR', value: '1.18x', sub: 'Underwritten: 1.35x  ↓ −12.6%', warn: true },
+  { label: 'Net Operating Income', value: '$412,800', sub: 'Underwritten: $465,000  ↓ −11.2%', warn: true },
+  { label: 'Occupancy Rate', value: '88%', sub: 'Underwritten: 95%  ↓ −7pp', warn: true },
   { label: 'Outstanding Balance', value: '$14.2M', sub: 'Originated: $15.0M  ·  5.3% paid', warn: false },
 ];
 
 const tableRows = [
-  { metric: 'DSCR', uw: '1.35x', current: '1.18x', variance: '-0.17x (-12.6%)', status: 'Watch', negative: true },
-  { metric: 'Net Operating Income', uw: '$465,000', current: '$412,800', variance: '-$52,200 (-11.2%)', status: 'Watch', negative: true },
-  { metric: 'Occupancy Rate', uw: '95%', current: '88%', variance: '-7pp', status: 'Breach Risk', negative: true },
-  { metric: 'Avg Effective Rent/SF', uw: '$24.50', current: '$22.80', variance: '-$1.70 (-6.9%)', status: 'Watch', negative: true },
+  { metric: 'DSCR', uw: '1.35x', current: '1.18x', variance: '−0.17x (−12.6%)', status: 'Watch', negative: true },
+  { metric: 'Net Operating Income', uw: '$465,000', current: '$412,800', variance: '−$52,200 (−11.2%)', status: 'Watch', negative: true },
+  { metric: 'Occupancy Rate', uw: '95%', current: '88%', variance: '−7pp', status: 'Breach Risk', negative: true },
+  { metric: 'Avg Effective Rent/SF', uw: '$24.50', current: '$22.80', variance: '−$1.70 (−6.9%)', status: 'Watch', negative: true },
   { metric: 'Property Tax Reserve', uw: '$38,000', current: '$41,200', variance: '+$3,200 (+8.4%)', status: 'OK', negative: false },
 ];
 
@@ -30,6 +31,12 @@ const uploadedFiles = [
   'Q4_2024_OperatingStatement.pdf',
   'RentRoll_Dec2024.xlsx',
 ];
+
+const statusStyle = (status: string) => {
+  if (status === 'OK') return 'text-green-600';
+  if (status === 'Breach Risk') return 'text-red-600 font-semibold';
+  return 'text-amber-600';
+};
 
 export default function Wedge1() {
   return (
@@ -41,7 +48,10 @@ export default function Wedge1() {
             <h1 className="text-2xl font-bold text-gray-900">Loan Underwriting & Asset Performance</h1>
             <p className="text-sm text-gray-500 mt-1">Upload loan docs and track performance vs. underwriting baseline</p>
           </div>
-          <Button>Upload Documents</Button>
+          <Button className="gap-2">
+            <Upload size={14} />
+            Upload Documents
+          </Button>
         </div>
 
         {/* KPI Cards */}
@@ -58,18 +68,23 @@ export default function Wedge1() {
         {/* Two columns */}
         <div className="flex gap-4">
           {/* Upload zone */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 w-[340px] flex-shrink-0 flex flex-col gap-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 w-[320px] flex-shrink-0 flex flex-col gap-4">
             <p className="text-sm font-semibold text-gray-900">Upload Loan Documents</p>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-8 flex flex-col items-center gap-2 text-center">
-              <span className="text-3xl text-gray-300">↑</span>
-              <p className="text-sm text-gray-500">Drop operating statements,<br />rent rolls & loan docs</p>
-              <Button variant="outline" size="sm">Browse Files</Button>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 p-8 flex flex-col items-center gap-2.5 text-center">
+              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+                <Upload size={16} className="text-gray-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Drop files here</p>
+                <p className="text-xs text-gray-400 mt-0.5">Operating statements, rent rolls & loan docs</p>
+              </div>
+              <Button variant="outline" size="sm" className="mt-1">Browse Files</Button>
             </div>
             <div className="flex flex-col gap-2">
               {uploadedFiles.map((f) => (
-                <div key={f} className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-md px-3 py-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                  <span className="text-xs text-gray-800 truncate">{f}</span>
+                <div key={f} className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                  <span className="text-xs text-gray-700 truncate">{f}</span>
                 </div>
               ))}
             </div>
@@ -79,7 +94,7 @@ export default function Wedge1() {
           <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <p className="text-sm font-semibold text-gray-900">Performance vs. Underwriting Baseline</p>
-              <Badge>AI Analyzed</Badge>
+              <Badge variant="secondary">AI Analyzed</Badge>
             </div>
             <Table>
               <TableHeader>
@@ -94,14 +109,12 @@ export default function Wedge1() {
               <TableBody>
                 {tableRows.map((row) => (
                   <TableRow key={row.metric}>
-                    <TableCell className="font-medium">{row.metric}</TableCell>
-                    <TableCell>{row.uw}</TableCell>
+                    <TableCell className="font-medium text-sm">{row.metric}</TableCell>
+                    <TableCell className="text-gray-500">{row.uw}</TableCell>
                     <TableCell>{row.current}</TableCell>
-                    <TableCell className={row.negative ? 'text-red-600' : 'text-green-600'}>{row.variance}</TableCell>
+                    <TableCell className={row.negative ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>{row.variance}</TableCell>
                     <TableCell>
-                      <span className={`text-xs font-medium ${row.status === 'OK' ? 'text-green-600' : row.status === 'Breach Risk' ? 'text-red-600 font-semibold' : 'text-amber-600'}`}>
-                        {row.status}
-                      </span>
+                      <span className={`text-xs font-medium ${statusStyle(row.status)}`}>{row.status}</span>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -111,7 +124,7 @@ export default function Wedge1() {
         </div>
 
         {/* AI Alert */}
-        <Alert className="border-amber-300 bg-amber-50">
+        <Alert className="border-amber-200 bg-amber-50">
           <AlertDescription className="text-amber-800 flex items-center justify-between">
             <span>
               <strong>AI Alert:</strong> Occupancy dropped 7pp below underwriting. DSCR trending toward covenant breach (threshold: 1.15x).
@@ -125,11 +138,10 @@ export default function Wedge1() {
 
         {/* Bottom row: Chart + Commentary */}
         <div className="flex gap-4">
-          {/* Chart placeholder */}
+          {/* Chart */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 flex-1">
             <p className="text-sm font-semibold text-gray-900 mb-4">NOI & DSCR Trend — Actual vs. Underwriting</p>
             <div className="h-44 bg-gray-50 rounded-lg flex items-end gap-2 p-4 relative">
-              {/* Simplified bar/line chart visual */}
               {[180, 175, 165, 150, 138, 132].map((h, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div
@@ -140,14 +152,18 @@ export default function Wedge1() {
                 </div>
               ))}
               <div className="absolute top-4 left-4 flex gap-4 text-xs text-gray-500">
-                <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-400 inline-block" /> Underwritten</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-red-400 inline-block" /> Actual</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-blue-400 inline-block rounded" /> Underwritten
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-red-400 inline-block rounded" /> Actual
+                </span>
               </div>
             </div>
           </div>
 
           {/* Commentary */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 w-[400px] flex-shrink-0 flex flex-col gap-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 w-[380px] flex-shrink-0 flex flex-col gap-4">
             <p className="text-sm font-semibold text-gray-900">AI-Drafted Variance Commentary</p>
             <p className="text-xs text-gray-600 leading-relaxed">
               Q4 2024 NOI of $412,800 reflects a decline of $52,200 (11.2%) vs. underwriting assumptions.
@@ -157,7 +173,7 @@ export default function Wedge1() {
               DSCR of 1.18x remains above the covenant threshold of 1.15x, but trajectory warrants monitoring
               over the next 2 quarters.
             </p>
-            <Button size="sm" className="self-start">Copy to Investor Report</Button>
+            <Button size="sm" variant="outline" className="self-start">Copy to Investor Report</Button>
           </div>
         </div>
       </div>
