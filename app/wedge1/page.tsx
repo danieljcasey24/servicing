@@ -9,169 +9,206 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Upload } from 'lucide-react';
+import { FileText, MessageSquare, Copy, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
-const kpis = [
-  { label: 'Current DSCR', value: '1.18x', sub: 'Underwritten: 1.35x  ↓ −12.6%', warn: true },
-  { label: 'Net Operating Income', value: '$412,800', sub: 'Underwritten: $465,000  ↓ −11.2%', warn: true },
-  { label: 'Occupancy Rate', value: '88%', sub: 'Underwritten: 95%  ↓ −7pp', warn: true },
-  { label: 'Outstanding Balance', value: '$14.2M', sub: 'Originated: $15.0M  ·  5.3% paid', warn: false },
+const covenantRows = [
+  { metric: 'DSCR', threshold: '≥ 1.20x', uw: '1.35x', current: '1.18x', variance: '−0.17x (−12.6%)', status: 'Breach Risk', trend: [1.35,1.32,1.28,1.24,1.21,1.18] },
+  { metric: 'Occupancy Rate', threshold: '≥ 90%', uw: '95%', current: '88%', variance: '−7pp', status: 'Watch', trend: [95,94,93,91,90,88] },
+  { metric: 'Net Operating Income', threshold: '≥ $440K', uw: '$465,000', current: '$412,800', variance: '−$52,200 (−11.2%)', status: 'Watch', trend: [465,460,452,440,430,412] },
+  { metric: 'Avg Effective Rent/SF', threshold: '≥ $23.00', uw: '$24.50', current: '$22.80', variance: '−$1.70 (−6.9%)', status: 'Watch', trend: [24.5,24.2,23.9,23.5,23.1,22.8] },
+  { metric: 'Property Tax Reserve', threshold: 'Funded', uw: '$38,000', current: '$41,200', variance: '+$3,200 (+8.4%)', status: 'OK', trend: [38,38.5,39,40,41,41.2] },
 ];
 
-const tableRows = [
-  { metric: 'DSCR', uw: '1.35x', current: '1.18x', variance: '−0.17x (−12.6%)', status: 'Watch', neg: true },
-  { metric: 'Net Operating Income', uw: '$465,000', current: '$412,800', variance: '−$52,200 (−11.2%)', status: 'Watch', neg: true },
-  { metric: 'Occupancy Rate', uw: '95%', current: '88%', variance: '−7pp', status: 'Breach Risk', neg: true },
-  { metric: 'Avg Effective Rent/SF', uw: '$24.50', current: '$22.80', variance: '−$1.70 (−6.9%)', status: 'Watch', neg: true },
-  { metric: 'Property Tax Reserve', uw: '$38,000', current: '$41,200', variance: '+$3,200 (+8.4%)', status: 'OK', neg: false },
+const sourceDocs = [
+  { name: 'Q4_2024_OperatingStatement.pdf', extracted: 'Nov 15', confidence: 99 },
+  { name: 'RentRoll_Dec2024.xlsx', extracted: 'Nov 15', confidence: 97 },
 ];
 
-const uploadedFiles = [
-  'Q4_2024_OperatingStatement.pdf',
-  'RentRoll_Dec2024.xlsx',
-];
+const statusBadge = (s: string) => {
+  if (s === 'Breach Risk') return <span className="text-[11px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Breach Risk</span>;
+  if (s === 'Watch') return <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Watch</span>;
+  return <span className="text-[11px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">OK</span>;
+};
 
-const statusStyle = (s: string) => {
-  if (s === 'OK') return 'text-green-600';
-  if (s === 'Breach Risk') return 'text-red-600';
-  return 'text-amber-600';
+// Mini sparkline as inline bars
+const Sparkline = ({ values, neg }: { values: number[]; neg: boolean }) => {
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  return (
+    <div className="flex items-end gap-[2px] h-[14px]">
+      {values.map((v, i) => (
+        <div
+          key={i}
+          className={`w-[4px] rounded-sm ${neg ? 'bg-red-300' : 'bg-green-300'}`}
+          style={{ height: `${Math.max(3, ((v - min) / range) * 14)}px` }}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default function Wedge1() {
   return (
     <AppShell>
-      <div className="p-8 flex flex-col gap-6">
-        {/* Header */}
+      <div className="p-8 flex flex-col gap-5">
+
+        {/* Loan context header */}
         <div className="flex items-start justify-between">
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">LN-4821</span>
+              <span className="text-[11px] text-gray-400">·</span>
+              <span className="text-[11px] text-gray-400">2200 Market St, San Francisco</span>
+              <span className="text-[11px] text-gray-400">·</span>
+              <span className="text-[11px] text-gray-400">Q4 2024 Submission</span>
+            </div>
             <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Loan Underwriting & Asset Performance</h1>
-            <p className="text-[13px] text-gray-500 mt-1 leading-5">Upload loan docs and track performance vs. underwriting baseline</p>
+            <p className="text-[13px] text-gray-500 mt-1 leading-5">Compare Q4 actuals to underwriting baseline · Surface covenant exceptions</p>
           </div>
-          <Button size="sm" className="gap-2 text-[13px]">
-            <Upload size={13} />
-            Upload Documents
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2">
+              <CheckCircle size={12} className="text-green-500" />
+              <span>2 docs extracted · Nov 15 · 97% avg confidence</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Exception banner — FIRST */}
+        <div className="flex items-center justify-between gap-4 px-4 py-3 bg-red-50 border border-red-100 rounded-xl">
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={14} className="text-red-500 flex-shrink-0 mt-[1px]" />
+            <div>
+              <p className="text-[13px] font-semibold text-red-800">2 covenant conditions require review based on Q4 2024 submission</p>
+              <p className="text-[12px] text-red-700 mt-0.5">DSCR at 1.18x is below the 1.20x covenant threshold. Occupancy at 88% is below the 90% floor. Borrower explanation required within 30 days per Section 6.3.</p>
+            </div>
+          </div>
+          <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 gap-1.5 text-[12px]">
+            <MessageSquare size={12} />
+            Draft Borrower Request
           </Button>
         </div>
 
-        {/* KPI Cards */}
+        {/* KPIs */}
         <div className="grid grid-cols-4 gap-4">
-          {kpis.map((kpi) => (
+          {[
+            { label: 'Current DSCR', value: '1.18x', sub: 'Covenant threshold: 1.20x', color: 'text-red-600', icon: '↓' },
+            { label: 'Net Operating Income', value: '$412,800', sub: 'Underwritten: $465,000 (−11.2%)', color: 'text-amber-600', icon: '↓' },
+            { label: 'Occupancy Rate', value: '88%', sub: 'Covenant floor: 90%', color: 'text-red-600', icon: '↓' },
+            { label: 'Submission Status', value: '2 docs', sub: 'Last extracted Nov 15 · 97% confidence', color: 'text-green-600', icon: '✓' },
+          ].map((kpi) => (
             <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-5">
               <p className="text-[11px] font-medium text-gray-500 mb-[6px]">{kpi.label}</p>
-              <p className={`text-2xl font-bold leading-tight mb-[4px] ${kpi.warn ? 'text-red-600' : 'text-gray-900'}`}>{kpi.value}</p>
+              <p className={`text-2xl font-bold leading-tight mb-[4px] ${kpi.color}`}>{kpi.value}</p>
               <p className="text-[11px] text-gray-400 leading-4">{kpi.sub}</p>
             </div>
           ))}
         </div>
 
-        {/* Upload zone + Variance table */}
+        {/* Covenant table */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-[14px] border-b border-gray-100">
+            <p className="text-[13px] font-semibold text-gray-900">Covenant Test Results — Q4 2024 vs. Underwriting Baseline</p>
+            <span className="text-[11px] text-gray-400">Updated Nov 15 from AI extraction</span>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-b border-gray-100">
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Metric</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Covenant Threshold</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Underwritten</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Q4 2024 Actual</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Variance</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Trend</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Status</TableHead>
+                <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {covenantRows.map((row) => (
+                <TableRow key={row.metric} className="border-b border-gray-50">
+                  <TableCell className="text-[13px] font-medium px-5 py-3">{row.metric}</TableCell>
+                  <TableCell className="text-[12px] text-gray-500 px-3 py-3 font-mono">{row.threshold}</TableCell>
+                  <TableCell className="text-[12px] text-gray-500 px-3 py-3">{row.uw}</TableCell>
+                  <TableCell className={`text-[13px] font-semibold px-3 py-3 ${row.status === 'OK' ? 'text-gray-800' : row.status === 'Breach Risk' ? 'text-red-600' : 'text-amber-700'}`}>{row.current}</TableCell>
+                  <TableCell className={`text-[12px] font-medium px-3 py-3 ${row.status === 'OK' ? 'text-green-600' : 'text-red-600'}`}>{row.variance}</TableCell>
+                  <TableCell className="px-3 py-3">
+                    <Sparkline values={row.trend} neg={row.status !== 'OK'} />
+                  </TableCell>
+                  <TableCell className="px-3 py-3">{statusBadge(row.status)}</TableCell>
+                  <TableCell className="px-5 py-3">
+                    {row.status !== 'OK' ? (
+                      <Button variant="outline" size="sm" className="text-[11px] h-7 px-2.5 gap-1.5 text-gray-600">
+                        <MessageSquare size={10} />
+                        Request Explanation
+                      </Button>
+                    ) : (
+                      <span className="text-[11px] text-gray-300">—</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* AI Commentary + Source Docs */}
         <div className="flex gap-4">
-          {/* Upload zone */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 w-[300px] flex-shrink-0 flex flex-col gap-4">
-            <p className="text-[13px] font-semibold text-gray-900">Upload Loan Documents</p>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 p-8 flex flex-col items-center gap-3 text-center">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <Upload size={16} className="text-gray-400" />
-              </div>
-              <div>
-                <p className="text-[13px] text-gray-600 font-medium">Drop files here</p>
-                <p className="text-[11px] text-gray-400 mt-0.5 leading-4">Operating statements,<br />rent rolls & loan docs</p>
-              </div>
-              <Button variant="outline" size="sm" className="text-[12px]">Browse Files</Button>
+          {/* Commentary — promoted */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 flex-1 min-w-0 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-semibold text-gray-900">AI-Drafted Variance Commentary</p>
+              <Badge variant="secondary" className="text-[10px]">Ready for investor report</Badge>
+            </div>
+            <p className="text-[12px] text-gray-600 leading-[1.65]">
+              Q4 2024 NOI of $412,800 reflects a decline of $52,200 (11.2%) versus underwriting assumptions of $465,000.
+              The primary driver is occupancy compression to 88% versus underwritten 95%, attributable to three tenant
+              non-renewals in October. Effective rent per square foot held near expectations at $22.80 versus $24.50 underwritten.
+              <br /><br />
+              DSCR of 1.18x is below the 1.20x covenant threshold and below the underwritten 1.35x.
+              The trajectory over the past four quarters shows consistent compression, warranting active monitoring
+              and borrower engagement over the next two quarters. Tax reserve position remains adequate at $41,200
+              versus the underwritten $38,000 requirement.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" className="gap-1.5 text-[12px]">
+                <Copy size={11} />
+                Copy to Investor Report
+              </Button>
+              <Button size="sm" variant="outline" className="gap-1.5 text-[12px]">
+                <MessageSquare size={11} />
+                Draft Borrower Letter
+              </Button>
+            </div>
+          </div>
+
+          {/* Source Documents — demoted */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 w-[280px] flex-shrink-0 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-semibold text-gray-900">Source Documents</p>
+              <Button variant="ghost" size="sm" className="text-[11px] h-6 px-2 text-gray-500">Upload New</Button>
             </div>
             <div className="flex flex-col gap-2">
-              {uploadedFiles.map((f) => (
-                <div key={f} className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                  <span className="w-[6px] h-[6px] rounded-full bg-green-500 flex-shrink-0" />
-                  <span className="text-[12px] text-gray-700 truncate leading-none">{f}</span>
+              {sourceDocs.map((doc) => (
+                <div key={doc.name} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-100 rounded-lg">
+                  <FileText size={14} className="text-blue-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] text-gray-700 font-medium truncate">{doc.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] text-gray-400">Extracted {doc.extracted}</span>
+                      <span className="text-[10px] text-green-600 font-medium">{doc.confidence}% confidence</span>
+                    </div>
+                  </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Variance table */}
-          <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden min-w-0">
-            <div className="flex items-center justify-between px-5 py-[14px] border-b border-gray-100">
-              <p className="text-[13px] font-semibold text-gray-900">Performance vs. Underwriting Baseline</p>
-              <Badge variant="secondary" className="text-[11px]">AI Analyzed</Badge>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent border-b border-gray-100">
-                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Metric</TableHead>
-                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Underwritten</TableHead>
-                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Current</TableHead>
-                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-3">Variance</TableHead>
-                  <TableHead className="text-[11px] text-gray-500 font-medium h-9 px-5">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tableRows.map((row) => (
-                  <TableRow key={row.metric} className="border-b border-gray-50">
-                    <TableCell className="text-[13px] font-medium px-5 py-3">{row.metric}</TableCell>
-                    <TableCell className="text-[13px] text-gray-500 px-3 py-3">{row.uw}</TableCell>
-                    <TableCell className="text-[13px] text-gray-700 px-3 py-3">{row.current}</TableCell>
-                    <TableCell className={`text-[13px] font-semibold px-3 py-3 ${row.neg ? 'text-red-600' : 'text-green-600'}`}>{row.variance}</TableCell>
-                    <TableCell className="px-5 py-3">
-                      <span className={`text-[12px] font-semibold ${statusStyle(row.status)}`}>{row.status}</span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-
-        {/* AI Alert */}
-        <div className="flex items-center justify-between gap-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
-          <p className="text-[13px] text-amber-800 leading-5">
-            <span className="font-semibold">AI Alert:</span> Occupancy dropped 7pp below underwriting. DSCR trending toward covenant breach (threshold: 1.15x). Recommend borrower outreach.
-          </p>
-          <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white flex-shrink-0 text-[12px]">
-            Draft Outreach
-          </Button>
-        </div>
-
-        {/* Chart + Commentary */}
-        <div className="flex gap-4">
-          {/* Chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-gray-900 mb-4">NOI & DSCR Trend — Actual vs. Underwriting</p>
-            <div className="h-44 bg-gray-50 rounded-lg flex items-end gap-2 px-4 pb-4 pt-8 relative">
-              {[180, 175, 165, 150, 138, 132].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div
-                    className="w-full rounded-t bg-red-400"
-                    style={{ height: `${h * 0.7}px` }}
-                  />
-                  <span className="text-[10px] text-gray-400">{["Q3'23", "Q4'23", "Q1'24", "Q2'24", "Q3'24", "Q4'24"][i]}</span>
-                </div>
-              ))}
-              <div className="absolute top-3 left-4 flex gap-4 text-[11px] text-gray-500">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-3 h-[2px] bg-blue-400 inline-block rounded" /> Underwritten
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-3 h-[2px] bg-red-400 inline-block rounded" /> Actual
-                </span>
+              <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 flex flex-col items-center gap-1.5 text-center">
+                <Clock size={14} className="text-gray-300" />
+                <p className="text-[11px] text-gray-400">Next submission due Jan 30</p>
               </div>
             </div>
           </div>
-
-          {/* Commentary */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 w-[360px] flex-shrink-0 flex flex-col gap-4">
-            <p className="text-[13px] font-semibold text-gray-900">AI-Drafted Variance Commentary</p>
-            <p className="text-[12px] text-gray-600 leading-[1.6]">
-              Q4 2024 NOI of $412,800 reflects a decline of $52,200 (11.2%) vs. underwriting assumptions.
-              The primary driver is occupancy compression to 88% vs. underwritten 95%, partially attributable
-              to 3 tenant non-renewals in October. Effective rent/SF held near expectations at $22.80 vs. $24.50 underwritten.
-              <br /><br />
-              DSCR of 1.18x remains above the covenant threshold of 1.15x, but trajectory warrants monitoring
-              over the next 2 quarters.
-            </p>
-            <Button size="sm" variant="outline" className="self-start text-[12px]">Copy to Investor Report</Button>
-          </div>
         </div>
+
       </div>
     </AppShell>
   );

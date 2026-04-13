@@ -1,7 +1,6 @@
 import { AppShell } from '@/components/app-shell';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { CheckCircle, Circle, ChevronRight, MessageSquare, ThumbsUp, AlertTriangle } from 'lucide-react';
 
 const rawLines = [
   'OPERATING STATEMENT',
@@ -27,60 +26,90 @@ const rawLines = [
 ];
 
 const extractedRows = [
-  { field: 'Rental Income', value: '$192,800 (ann.)', confidence: '99%' },
-  { field: 'CAM Reimbursements', value: '$12,400', confidence: '98%' },
-  { field: 'Parking Revenue', value: '$9,600', confidence: '99%' },
-  { field: 'Misc Income', value: '$3,200', confidence: '97%' },
-  { field: 'Total Revenue', value: '$218,000', confidence: '99%' },
-  { field: 'Property Taxes', value: '$39,200', confidence: '99%' },
-  { field: 'Insurance', value: '$8,400', confidence: '98%' },
-  { field: 'Maintenance', value: '$16,800', confidence: '96%' },
-  { field: 'Mgmt Fee', value: '$8,720', confidence: '99%' },
-  { field: 'Utilities', value: '$12,400', confidence: '99%' },
-  { field: 'Total Expenses', value: '$85,520', confidence: '99%' },
-  { field: 'NOI', value: '$132,480 (ann.)', confidence: '99%' },
-  { field: 'DSCR (est.)', value: '1.18x', confidence: 'Calc.' },
+  { field: 'Rental Income', value: '$192,800 (ann.)', confidence: 99, flag: false },
+  { field: 'CAM Reimbursements', value: '$12,400', confidence: 98, flag: false },
+  { field: 'Parking Revenue', value: '$9,600', confidence: 99, flag: false },
+  { field: 'Misc Income', value: '$3,200', confidence: 97, flag: false },
+  { field: 'Total Revenue', value: '$218,000', confidence: 99, flag: false },
+  { field: 'Property Taxes', value: '$39,200', confidence: 99, flag: false },
+  { field: 'Insurance', value: '$8,400', confidence: 98, flag: false },
+  { field: 'Maintenance', value: '$16,800', confidence: 96, flag: true },
+  { field: 'Mgmt Fee', value: '$8,720', confidence: 99, flag: false },
+  { field: 'Utilities', value: '$12,400', confidence: 99, flag: false },
+  { field: 'Total Expenses', value: '$85,520', confidence: 99, flag: false },
+  { field: 'NOI', value: '$132,480 (ann.)', confidence: 99, flag: false },
+  { field: 'DSCR (est.)', value: '1.18x', confidence: 100, flag: false },
 ];
 
 const spreadRows = [
-  { metric: 'Total Revenue', uw: '$232K', q3: '$224K', q4: '$218K', delta: '−2.7%', neg: true },
-  { metric: 'NOI', uw: '$148K', q3: '$138K', q4: '$132K', delta: '−4.3%', neg: true },
-  { metric: 'DSCR', uw: '1.35x', q3: '1.26x', q4: '1.18x', delta: '−0.08x', neg: true },
-  { metric: 'Occupancy', uw: '95%', q3: '91%', q4: '88%', delta: '−3pp', neg: true },
-  { metric: 'Eff. Rent/SF', uw: '$24.50', q3: '$23.80', q4: '$22.80', delta: '−$1.00', neg: true },
-  { metric: 'OpEx Ratio', uw: '36%', q3: '38%', q4: '39%', delta: '+1pp', neg: false },
-  { metric: 'Taxes', uw: '$38K', q3: '$39.2K', q4: '$39.2K', delta: '+3.2%', neg: false },
-  { metric: 'Insurance', uw: '$8.0K', q3: '$8.4K', q4: '$8.4K', delta: '+5.0%', neg: false },
+  { metric: 'Total Revenue', uw: '$232K', q3: '$224K', q4: '$218K', delta: '−2.7%', neg: true, flagged: false },
+  { metric: 'NOI', uw: '$148K', q3: '$138K', q4: '$132K', delta: '−4.3%', neg: true, flagged: false },
+  { metric: 'DSCR', uw: '1.35x', q3: '1.26x', q4: '1.18x', delta: '−0.08x', neg: true, flagged: true },
+  { metric: 'Occupancy', uw: '95%', q3: '91%', q4: '88%', delta: '−3pp', neg: true, flagged: true },
+  { metric: 'Eff. Rent/SF', uw: '$24.50', q3: '$23.80', q4: '$22.80', delta: '−$1.00', neg: true, flagged: false },
+  { metric: 'OpEx Ratio', uw: '36%', q3: '38%', q4: '39%', delta: '+1pp', neg: false, flagged: false },
+  { metric: 'Taxes', uw: '$38K', q3: '$39.2K', q4: '$39.2K', delta: '+3.2%', neg: false, flagged: true },
+  { metric: 'Insurance', uw: '$8.0K', q3: '$8.4K', q4: '$8.4K', delta: '+5.0%', neg: false, flagged: true },
 ];
+
+const flaggedCount = spreadRows.filter(r => r.flagged).length;
 
 export default function Wedge3() {
   return (
     <AppShell>
-      <div className="p-8 flex flex-col gap-6 h-full">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Asset Performance — Rent Roll Ingestion</h1>
-            <p className="text-[13px] text-gray-500 mt-1 leading-5">
-              2200 Market St, San Francisco · LN-4821 · Q4 2024 Submission
-            </p>
+      <div className="p-8 flex flex-col gap-5 h-full">
+
+        {/* Queue context + progress */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[11px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Submission 3 of 12</span>
+            <ChevronRight size={11} className="text-gray-300" />
+            <span className="text-[11px] text-gray-400">Q4 2024 Batch · Due Jan 30</span>
+            <ChevronRight size={11} className="text-gray-300" />
+            <span className="text-[11px] font-medium text-gray-600">LN-4821 · 2200 Market St, SF</span>
           </div>
-          <Badge className="mt-1 text-[11px]">AI Processed</Badge>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Asset Performance — Rent Roll Ingestion</h1>
+              <p className="text-[13px] text-gray-500 mt-1 leading-5">Review AI extraction accuracy · Approve data before covenant testing</p>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Step progress */}
+              <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2">
+                {[
+                  { label: 'Ingested', done: true },
+                  { label: 'Extracted', done: true },
+                  { label: 'Review', done: false, active: true },
+                  { label: 'Approved', done: false },
+                ].map((step, i, arr) => (
+                  <div key={step.label} className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
+                      {step.done ? (
+                        <CheckCircle size={13} className="text-green-500" />
+                      ) : (
+                        <Circle size={13} className={step.active ? 'text-blue-500' : 'text-gray-300'} />
+                      )}
+                      <span className={`text-[11px] font-medium ${step.done ? 'text-gray-400' : step.active ? 'text-blue-600' : 'text-gray-300'}`}>{step.label}</span>
+                    </div>
+                    {i < arr.length - 1 && <ChevronRight size={10} className="text-gray-200" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Three-panel spread */}
         <div className="flex gap-3 flex-1 min-h-0">
 
-          {/* Panel 1: Raw */}
+          {/* Panel 1: Raw Document */}
           <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col min-w-0">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
               <span className="text-[11px] font-semibold text-gray-400 bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">1</span>
               <p className="text-[13px] font-semibold text-gray-800">Raw Document (PDF)</p>
             </div>
             <div className="p-4 flex-1 bg-gray-50 overflow-y-auto">
-              <pre className="text-[11px] text-gray-500 font-mono leading-[1.7] whitespace-pre-wrap">
-                {rawLines.join('\n')}
-              </pre>
+              <pre className="text-[11px] text-gray-500 font-mono leading-[1.7] whitespace-pre-wrap">{rawLines.join('\n')}</pre>
             </div>
           </div>
 
@@ -101,28 +130,32 @@ export default function Wedge3() {
                 </thead>
                 <tbody>
                   {extractedRows.map((row, i) => (
-                    <tr key={row.field} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/60' : ''}`}>
+                    <tr key={row.field} className={`border-b border-gray-50 ${row.flag ? 'bg-amber-50/60' : i % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
                       <td className="px-4 py-2.5 text-[12px] text-gray-600">{row.field}</td>
                       <td className="px-4 py-2.5 text-[12px] text-gray-900 font-medium">{row.value}</td>
-                      <td className="px-4 py-2.5 text-[12px] text-green-600 font-medium">{row.confidence}</td>
+                      <td className="px-4 py-2.5">
+                        <span className={`text-[11px] font-medium ${row.flag ? 'text-amber-600' : 'text-green-600'}`}>{row.confidence}%</span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            {/* Approve CTA — the human checkpoint */}
+            <div className="px-4 py-3 bg-blue-50 border-t border-blue-100 flex items-center justify-between">
+              <p className="text-[11px] text-blue-700">1 field flagged for review (Maintenance, 96% confidence)</p>
+              <Button size="sm" className="gap-1.5 text-[12px] bg-blue-600 hover:bg-blue-700 text-white">
+                <ThumbsUp size={11} />
+                Approve & Push to Covenant Test
+              </Button>
+            </div>
           </div>
 
           {/* Panel 3: Spread */}
           <div className="bg-white rounded-xl border border-gray-200 flex-1 overflow-hidden flex flex-col min-w-0">
-            <div className="px-4 py-3 bg-green-50 border-b border-green-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-semibold text-green-600 bg-green-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">3</span>
-                <p className="text-[13px] font-semibold text-gray-800">Spread — Prior vs. Current vs. UW</p>
-              </div>
-              <Button size="sm" variant="outline" className="text-[11px] h-7 px-2.5 gap-1.5">
-                <Download size={11} />
-                Export
-              </Button>
+            <div className="px-4 py-3 bg-green-50 border-b border-green-100 flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-green-600 bg-green-100 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">3</span>
+              <p className="text-[13px] font-semibold text-gray-800">Spread — Prior vs. Current vs. UW</p>
             </div>
             <div className="overflow-y-auto flex-1">
               <table className="w-full">
@@ -137,8 +170,11 @@ export default function Wedge3() {
                 </thead>
                 <tbody>
                   {spreadRows.map((row, i) => (
-                    <tr key={row.metric} className={`border-b border-gray-50 ${i % 2 === 1 ? 'bg-gray-50/60' : ''}`}>
-                      <td className="px-4 py-2.5 text-[12px] text-gray-700 font-semibold">{row.metric}</td>
+                    <tr key={row.metric} className={`border-b border-gray-50 ${row.flagged ? 'bg-red-50/40' : i % 2 === 1 ? 'bg-gray-50/60' : ''}`}>
+                      <td className="px-4 py-2.5 text-[12px] text-gray-700 font-semibold flex items-center gap-1.5">
+                        {row.flagged && <AlertTriangle size={10} className="text-amber-500 flex-shrink-0" />}
+                        {row.metric}
+                      </td>
                       <td className="px-4 py-2.5 text-[12px] text-gray-400">{row.uw}</td>
                       <td className="px-4 py-2.5 text-[12px] text-gray-600">{row.q3}</td>
                       <td className="px-4 py-2.5 text-[12px] text-gray-900 font-semibold">{row.q4}</td>
@@ -148,10 +184,13 @@ export default function Wedge3() {
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3 border-t border-gray-100 bg-amber-50">
-              <p className="text-[11px] text-amber-800 leading-[1.5]">
-                ⚠ 4 metrics exceed 20% variance threshold. AI-drafted commentary ready for review.
-              </p>
+            {/* Action CTA — tied to flagged variances */}
+            <div className="px-4 py-3 bg-amber-50 border-t border-amber-100 flex items-center justify-between">
+              <p className="text-[11px] text-amber-800 font-medium">{flaggedCount} metrics flagged for borrower explanation (&gt;20% variance or covenant breach)</p>
+              <Button size="sm" className="gap-1.5 text-[12px] bg-amber-600 hover:bg-amber-700 text-white flex-shrink-0">
+                <MessageSquare size={11} />
+                Draft Variance Request ({flaggedCount})
+              </Button>
             </div>
           </div>
 
